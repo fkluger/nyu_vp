@@ -6,10 +6,11 @@ import numpy as np
 
 class NYUVP:
 
-    def __init__(self, image_dir_path, csv_dir_path, split=None, keep_in_mem=True):
+    def __init__(self, image_dir_path, csv_dir_path, split=None, keep_in_mem=True, crop=((7, 6), (625, 468))):
         self.image_dir = image_dir_path
         self.csv_dir = csv_dir_path
         self.keep_in_mem = keep_in_mem
+        self.crop = crop
 
         self.image_files = glob.glob(os.path.join(self.image_dir, "*.png"))
         self.image_files.sort()
@@ -59,6 +60,14 @@ class NYUVP:
             else:
                 vp = csv1[1:]
                 vp = np.expand_dims(vp, 0)
+
+            if self.crop is not None:
+                vp[:, 0] -= self.crop[0][0]
+                vp[:, 1] -= self.crop[0][1]
+
+                image = image[self.crop[0][1]:self.crop[0][1]+self.crop[1][1],
+                              self.crop[0][0]:self.crop[0][0]+self.crop[1][0], :]
+
             # csv2 = np.genfromtxt(self.csv1_files[key], delimiter=" ", skip_header=1)
             datum = {'image': image, 'vp': vp}
             if self.keep_in_mem:
@@ -79,9 +88,9 @@ if __name__ == '__main__':
         plt.figure()
         plt.imshow(test_datum['image'])
         vp = test_datum['vp']
-        for vi in range(vp.shape[0]):
-            p = vp[vi,:]
-            plt.plot(p[0], p[1], 'rx')
+        # for vi in range(vp.shape[0]):
+        #     p = vp[vi,:]
+        #     plt.plot(p[0], p[1], 'rx')
 
         plt.show()
 
