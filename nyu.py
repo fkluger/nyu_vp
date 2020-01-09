@@ -3,7 +3,7 @@ import os
 import csv
 import numpy as np
 import scipy.io
-import lsd.lsd as lsd
+from .lsd import lsd
 
 
 def rgb2gray(rgb):
@@ -118,10 +118,10 @@ class NYUVP:
                         if line[key_x1] == '':
                             break
 
-                        p1x = int(line[key_x1])
-                        p1y = int(line[key_y1])
-                        p2x = int(line[key_x2])
-                        p2y = int(line[key_y2])
+                        p1x = float(line[key_x1])
+                        p1y = float(line[key_y1])
+                        p2x = float(line[key_x2])
+                        p2y = float(line[key_y2])
 
                         ls = np.array([p1x, p1y, p2x, p2y])
                         lines_per_vp += []
