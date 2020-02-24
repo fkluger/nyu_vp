@@ -4,9 +4,10 @@ channels:
 dependencies:
   - _libgcc_mutex=0.1=main
   - blas=1.0=mkl
-  - ca-certificates=2019.5.15=0
-  - certifi=2019.6.16=py36_0
+  - ca-certificates=2020.1.1=0
+  - certifi=2019.11.28=py36_0
   - cycler=0.10.0=py36_0
+  - cython=0.29.15=py36he6710b0_0
   - dbus=1.13.6=h746ee38_0
   - expat=2.2.6=he6710b0_0
   - fontconfig=2.13.0=h9420a91_0
@@ -37,7 +38,7 @@ dependencies:
   - numpy=1.16.4=py36h7e9f1db_0
   - numpy-base=1.16.4=py36hde5b4d6_0
   - olefile=0.46=py36_0
-  - openssl=1.1.1c=h7b6447c_1
+  - openssl=1.1.1d=h7b6447c_4
   - pcre=8.43=he6710b0_0
   - pillow=6.0.0=py36h34e0f95_0
   - pip=19.1.1=py36_0
