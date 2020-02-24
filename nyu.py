@@ -13,8 +13,17 @@ def rgb2gray(rgb):
 class NYUVP:
 
     def __init__(self, data_dir_path="./data", split='all', keep_data_in_memory=True, mat_file_path=None,
-                 normalise_coordinates=False, remove_borders=False, extract_lines=False):
-
+                 normalise_coordinates=False, remove_borders=True, extract_lines=False):
+        """
+        NYU-VP dataset class
+        :param data_dir_path: Path where the CSV files containing VP labels etc. are stored
+        :param split: train, val, test, trainval or all
+        :param keep_data_in_memory: whether data shall be cached in memory
+        :param mat_file_path: path to the MAT file containing the original NYUv2 dataset
+        :param normalise_coordinates: normalise all point coordinates to a range of (-1,1)
+        :param remove_borders: ignore the white borders around the NYU images
+        :param extract_lines: do not use the pre-extracted line segments
+        """
         self.keep_in_mem = keep_data_in_memory
         self.normalise_coords = normalise_coordinates
         self.remove_borders = remove_borders
@@ -63,7 +72,11 @@ class NYUVP:
         return len(self.dataset)
 
     def __getitem__(self, key):
-
+        """
+        Returns a sample from the dataset.
+        :param key: image ID within the selected dataset split
+        :return: dictionary containing vanishing points, line segments, original image
+        """
         id = self.set_ids[key]
 
         datum = self.dataset[key]
@@ -189,14 +202,23 @@ class NYUVP:
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
+    import argparse
 
-    mat_file_path = "/home/kluger/tmp/nyu_depth_v2_labeled.matv7.mat"
+    parser = argparse.ArgumentParser(
+        description='NYU-VP dataset visualisation',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    assert (mat_file_path is not None), "Replace mat_file_path with the path where your 'nyu_depth_v2_labeled.mat' " + \
-                                        "is stored in order to load the original RGB images, or comment this line"
+    parser.add_argument('--mat_file', default=None,
+                        help='Dataset directory')
+    opt = parser.parse_args()
+    mat_file_path = opt.mat_file
 
-    dataset = NYUVP("./data", mat_file_path="/home/kluger/tmp/nyu_depth_v2_labeled.matv7.mat",
-                    split='all', normalise_coordinates=False, remove_borders=True)
+    if mat_file_path is None:
+        print("Specify the path where your 'nyu_depth_v2_labeled.mat' " +
+              "is stored using the --mat_file option in order to load the original RGB images.")
+
+    dataset = NYUVP("./data", mat_file_path=mat_file_path, split='all', normalise_coordinates=False,
+                    remove_borders=True)
 
     show_plots = True
 
@@ -206,7 +228,7 @@ if __name__ == '__main__':
     for idx in range(len(dataset)):
         vps = dataset[idx]['VPs']
         num_vps = vps.shape[0]
-        print("%04d -- vps: %d" % (idx, num_vps))
+        print("image no. %04d -- vps: %d" % (idx, num_vps))
         all_num_vps += [num_vps]
         if num_vps > max_num_vp: max_num_vp = num_vps
 
