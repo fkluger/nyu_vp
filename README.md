@@ -1,6 +1,8 @@
 # NYU-VP: Vanishing Point Labels for the NYU Depth v2 Dataset
 
-If you use this code, please cite [our paper](https://arxiv.org/abs/2001.02643):
+![example](example.jpg)
+
+If you use this dataset and code, please cite [our paper](https://arxiv.org/abs/2001.02643):
 ```
 @article{kluger2020consac,
   title={CONSAC: Robust Multi-Model Fitting by Conditional Sample Consensus},
@@ -9,6 +11,8 @@ If you use this code, please cite [our paper](https://arxiv.org/abs/2001.02643):
   year={2020}
 }
 ```
+Please also cite the corresponding [NYU Depth v2 paper](https://cs.nyu.edu/~silberman/bib/indoor_seg_support.bib)! 
+
 
 ## Prerequisites
 In order to use the original RGB images as well, you need to obtain the original 
