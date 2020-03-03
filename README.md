@@ -4,10 +4,10 @@
 
 If you use this dataset and code, please cite [our paper](https://arxiv.org/abs/2001.02643):
 ```
-@article{kluger2020consac,
+@inproceedings{kluger2020consac,
   title={CONSAC: Robust Multi-Model Fitting by Conditional Sample Consensus},
   author={Kluger, Florian and Brachmann, Eric and Ackermann, Hanno and Rother, Carsten and Yang, Michael Ying and Rosenhahn, Bodo},
-  journal={arXiv preprint arXiv:2001.02643},
+  booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
   year={2020}
 }
 ```
