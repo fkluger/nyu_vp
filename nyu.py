@@ -135,7 +135,7 @@ class NYUVP:
                         p1y = float(line[key_y1])
                         p2x = float(line[key_x2])
                         if line[key_y2] == '433q':
-                            print(self.labelled_line_files[id])
+                            assert False, self.labelled_line_files[id]
                         p2y = float(line[key_y2])
 
                         ls = np.array([p1x, p1y, p2x, p2y])
