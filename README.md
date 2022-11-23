@@ -26,7 +26,7 @@ save('nyu_depth_v2_labeled.v7.mat','-v7')
 ## Installation
 Get the code:
 ```
-git clone --recurse-submodules https://www.tnt.uni-hannover.de:3000/kluger/nyu_vp.git
+git clone --recurse-submodules git@github.com:fkluger/nyu_vp.git
 cd nyu_vp
 ```
 
