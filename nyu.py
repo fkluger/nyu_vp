@@ -3,17 +3,16 @@ import os
 import csv
 import numpy as np
 import scipy.io
-from .lsd import lsd
-
+from pylsd.lsd import lsd
+import time
 
 def rgb2gray(rgb):
     return np.dot(rgb[...,:3], [0.2989, 0.5870, 0.1140])
 
-
 class NYUVP:
 
     def __init__(self, data_dir_path="./data", split='all', keep_data_in_memory=True, mat_file_path=None,
-                 normalise_coordinates=False, remove_borders=True, extract_lines=False):
+                 normalise_coordinates=False, remove_borders=True, extract_lines=False, external_lines_folder=None):
         """
         NYU-VP dataset class
         :param data_dir_path: Path where the CSV files containing VP labels etc. are stored
@@ -28,6 +27,7 @@ class NYUVP:
         self.normalise_coords = normalise_coordinates
         self.remove_borders = remove_borders
         self.extract_lines = extract_lines
+        self.external_lines = external_lines_folder
 
         self.vps_files = glob.glob(os.path.join(data_dir_path, "vps*"))
         self.lsd_line_files = glob.glob(os.path.join(data_dir_path, "lsd_lines*"))
@@ -81,6 +81,8 @@ class NYUVP:
 
         datum = self.dataset[key]
 
+        duration = None
+
         if datum is None:
 
             lsd_line_segments = None
@@ -95,7 +97,12 @@ class NYUVP:
                     image_ = image
 
                 if self.extract_lines:
-                    lsd_line_segments = lsd.detect_line_segments(image_)
+
+                    start_time = time.time()
+                    lsd_line_segments = lsd(image_)
+                    end_time = time.time()
+                    duration = end_time - start_time
+                    duration *= 1000
 
                     if self.remove_borders:
                         lsd_line_segments[:,0] += 7
@@ -104,6 +111,20 @@ class NYUVP:
                         lsd_line_segments[:,3] += 6
             else:
                 image_rgb = None
+
+            if self.external_lines:
+                lines_file = os.path.join(self.external_lines, "%04d.csv" % id)
+
+                lsd_line_segments = []
+                with open(lines_file, 'r') as csv_file:
+                    reader = csv.reader(csv_file, delimiter=' ')
+                    for line in reader:
+                        p1x = float(line[0])
+                        p1y = float(line[1])
+                        p2x = float(line[2])
+                        p2y = float(line[3])
+                        lsd_line_segments += [np.array([p1x, p1y, p2x, p2y])]
+                lsd_line_segments = np.vstack(lsd_line_segments)
 
             if lsd_line_segments is None:
                 lsd_line_segments = []
@@ -189,7 +210,7 @@ class NYUVP:
             vds = np.vstack(vd_list)
 
             datum = {'line_segments': line_segments, 'VPs': vps, 'id': id, 'VDs': vds, 'image': image_rgb,
-                     'labelled_lines': labelled_line_segments}
+                     'labelled_lines': labelled_line_segments, "lsd_time": duration}
 
             for vi in range(datum['VPs'].shape[0]):
                 datum['VPs'][vi,:] /= np.linalg.norm(datum['VPs'][vi,:])
@@ -208,7 +229,7 @@ if __name__ == '__main__':
         description='NYU-VP dataset visualisation',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('--mat_file', default=None,
+    parser.add_argument('--mat_file', default="/data/kluger/datasets/nyu_depth_v2_labeled.matv7.mat",
                         help='Dataset directory')
     opt = parser.parse_args()
     mat_file_path = opt.mat_file
@@ -218,12 +239,14 @@ if __name__ == '__main__':
               "is stored using the --mat_file option in order to load the original RGB images.")
 
     dataset = NYUVP("./data", mat_file_path=mat_file_path, split='all', normalise_coordinates=False,
-                    remove_borders=True)
+                    remove_borders=True, extract_lines=True)
 
-    show_plots = True
+    show_plots = False
 
     max_num_vp = 0
     all_num_vps = []
+
+    times = []
 
     for idx in range(len(dataset)):
         vps = dataset[idx]['VPs']
@@ -234,6 +257,10 @@ if __name__ == '__main__':
 
         ls = dataset[idx]['line_segments']
         vp = dataset[idx]['VPs']
+
+        duration = dataset[idx]["lsd_time"]
+        print(duration)
+        times += [duration]
 
         if show_plots:
             image = dataset[idx]['image']
@@ -276,6 +303,8 @@ if __name__ == '__main__':
 
             fig.tight_layout()
             plt.show()
+
+    print("average time: %.3f ms" % (np.mean(times)))
 
     print("num VPs: ", np.sum(all_num_vps), np.sum(all_num_vps)*1./len(dataset), np.max(all_num_vps))
 
