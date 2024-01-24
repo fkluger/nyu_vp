@@ -223,7 +223,7 @@ if __name__ == '__main__':
         description='NYU-VP dataset visualisation',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('--mat_file', default="/data/kluger/datasets/nyu_depth_v2_labeled.matv7.mat",
+    parser.add_argument('--mat_file', default="./nyu_depth_v2_labeled.mat",
                         help='Dataset directory')
     opt = parser.parse_args()
     mat_file_path = opt.mat_file
@@ -235,7 +235,7 @@ if __name__ == '__main__':
     dataset = NYUVP("./data", mat_file_path=mat_file_path, split='all', normalise_coordinates=False,
                     remove_borders=True, extract_lines=True)
 
-    show_plots = False
+    show_plots = True
 
     max_num_vp = 0
     all_num_vps = []
@@ -251,10 +251,6 @@ if __name__ == '__main__':
 
         ls = dataset[idx]['line_segments']
         vp = dataset[idx]['VPs']
-
-        duration = dataset[idx]["lsd_time"]
-        print(duration)
-        times += [duration]
 
         if show_plots:
             image = dataset[idx]['image']

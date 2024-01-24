@@ -6,6 +6,7 @@ dependencies:
   - pip
   - python=3.10
   - scipy=1.11.4
+  - matplotlib
   - pip:
     - pylsd-nova
 
