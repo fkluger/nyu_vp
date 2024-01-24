@@ -81,8 +81,6 @@ class NYUVP:
 
         datum = self.dataset[key]
 
-        duration = None
-
         if datum is None:
 
             lsd_line_segments = None
@@ -98,11 +96,7 @@ class NYUVP:
 
                 if self.extract_lines:
 
-                    start_time = time.time()
                     lsd_line_segments = lsd(image_)
-                    end_time = time.time()
-                    duration = end_time - start_time
-                    duration *= 1000
 
                     if self.remove_borders:
                         lsd_line_segments[:,0] += 7
@@ -210,7 +204,7 @@ class NYUVP:
             vds = np.vstack(vd_list)
 
             datum = {'line_segments': line_segments, 'VPs': vps, 'id': id, 'VDs': vds, 'image': image_rgb,
-                     'labelled_lines': labelled_line_segments, "lsd_time": duration}
+                     'labelled_lines': labelled_line_segments}
 
             for vi in range(datum['VPs'].shape[0]):
                 datum['VPs'][vi,:] /= np.linalg.norm(datum['VPs'][vi,:])
